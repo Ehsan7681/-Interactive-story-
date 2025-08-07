@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجموعه داستان‌های تعاملی بچگانه</title>
+    <meta name="description" content="مجموعه سه داستان تعاملی بچگانه با پایان‌های متفاوت">
+    <meta name="theme-color" content="#8e44ad">
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons for different devices -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+    
+    <!-- Splash screen for mobile -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="داستان‌های تعاملی">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-theme {
+            background-color: #121212;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .story-app {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-theme .story-app {
+            background: rgba(30, 30, 30, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-title {
+            text-align: center;
+            color: #000;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme .app-title {
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-subtitle {
+            text-align: center;
+            color: rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        body.dark-theme .app-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .story-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .story-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 15px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-theme .story-btn {
+            background: rgba(50, 50, 50, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .story-btn:hover {
+            background: rgba(255, 255, 255, 0.45);
+            transform: translateY(-3px);
+        }
+
+        body.dark-theme .story-btn:hover {
+            background: rgba(70, 70, 70, 0.45);
+        }
+
+        .story-btn.active {
+            background: rgba(142, 68, 173, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme .story-btn.active {
+            background: rgba(120, 50, 150, 0.4);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .story-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .story-name {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .story-content {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        body.dark-theme .story-content {
+            background: rgba(50, 50, 50, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .story-text {
+            color: #000;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: justify;
+            direction: rtl;
+        }
+
+        body.dark-theme .story-text {
+            color: #fff;
+        }
+
+        .story-image {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            color: rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-theme .story-image {
+            background: rgba(50, 50, 50, 0.3);
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .choices-section {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-theme .choices-section {
+            background: rgba(50, 50, 50, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .choices-title {
+            color: #000;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        body.dark-theme .choices-title {
+            color: #fff;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .choice-btn {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: right;
+            direction: rtl;
+        }
+
+        body.dark-theme .choice-btn {
+            background: rgba(50, 50, 50, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.45);
+            transform: translateY(-2px);
+        }
+
+        body.dark-theme .choice-btn:hover {
+            background: rgba(70, 70, 70, 0.45);
+        }
+
+        .choice-btn:active {
+            transform: translateY(1px);
+        }
+
+        .restart-btn {
+            width: 100%;
+            padding: 16px;
+            background: rgba(142, 68, 173, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 15px;
+            color: #000;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            display: none;
+        }
+
+        body.dark-theme .restart-btn {
+            background: rgba(120, 50, 150, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .restart-btn:hover {
+            background: rgba(142, 68, 173, 0.55);
+            transform: translateY(-2px);
+        }
+
+        body.dark-theme .restart-btn:hover {
+            background: rgba(120, 50, 150, 0.55);
+        }
+
+        .restart-btn:active {
+            transform: translateY(1px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        body.dark-theme .theme-toggle {
+            background: rgba(50, 50, 50, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.45);
+            transform: rotate(30deg);
+        }
+
+        body.dark-theme .theme-toggle:hover {
+            background: rgba(70, 70, 70, 0.45);
+        }
+
+        .theme-toggle i {
+            color: #000;
+            font-size: 1.5rem;
+        }
+
+        body.dark-theme .theme-toggle i {
+            color: #fff;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        body.dark-theme .progress-bar {
+            background: rgba(50, 50, 50, 0.2);
+        }
+
+        .progress {
+            height: 100%;
+            background: rgba(142, 68, 173, 0.7);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        body.dark-theme .progress {
+            background: rgba(120, 50, 150, 0.7);
+        }
+
+        .story-title {
+            text-align: center;
+            color: #000;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        body.dark-theme .story-title {
+            color: #fff;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .story-app {
+                padding: 15px;
+            }
+            
+            .story-selector {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .story-btn {
+                padding: 12px 5px;
+            }
+            
+            .story-icon {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            
+            .story-name {
+                font-size: 0.8rem;
+            }
+            
+            .story-text {
+                font-size: 1rem;
+            }
+            
+            .choice-btn {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+            
+            .restart-btn {
+                padding: 14px;
+                font-size: 1.1rem;
+            }
+            
+            .theme-toggle {
+                width: 45px;
+                height: 45px;
+                top: 15px;
+                right: 15px;
+            }
+            
+            .theme-toggle i {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .story-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .story-content {
+                min-height: 200px;
+            }
+            
+            .story-image {
+                height: 120px;
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .story-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <div class="app-container">
+        <div class="story-app">
+            <h1 class="app-title">مجموعه داستان‌های تعاملی</h1>
+            <p class="app-subtitle">سه ماجراجویی متفاوت برای کودکان</p>
+            
+            <div class="story-selector" id="storySelector">
+                <div class="story-btn active" data-story="forest">
+                    <div class="story-icon">🌲</div>
+                    <div class="story-name">جنگل جادویی</div>
+                </div>
+                <div class="story-btn" data-story="ocean">
+                    <div class="story-icon">🐋</div>
+                    <div class="story-name">اقیانوس مرموز</div>
+                </div>
+                <div class="story-btn" data-story="castle">
+                    <div class="story-icon">🏰</div>
+                    <div class="story-name">قلعه اسرارآمیز</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            
+            <div class="story-content">
+                <h2 class="story-title" id="storyTitle">شروع ماجرا</h2>
+                <div class="story-image" id="storyImage">🌲</div>
+                <div class="story-text" id="storyText">
+                    در یک روز آفتابی، یک پسر به نام آرین تصمیم گرفت تا به جنگل جادویی سفر کند. او با کوله‌پشتی پر از مواد غذایی و یک نقشه قدیمی به راه افتاد. وقتی وارد جنگل شد، با یک روباه قرمز رنگ مواجه شد که به او نزدیک شد و گفت: "سلام آرین! من روباه جادویی هستم. اگر بخواهی گنج پنهان در این جنگل را پیدا کنی، باید چند چالش را پشت سر بگذاری."
+                </div>
+            </div>
+            
+            <div class="choices-section">
+                <h2 class="choices-title">تصمیم بگیر!</h2>
+                <div class="choices-container" id="choicesContainer">
+                    <button class="choice-btn" data-choice="1">قبول کردن چالش و دنبال کردن روباه</button>
+                    <button class="choice-btn" data-choice="2">رد کردن پیشنهاد و ادامه دادن مسیر</button>
+                </div>
+                <button class="restart-btn" id="restartBtn">
+                    <i class="fas fa-redo"></i> شروع دوباره داستان
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // داستان‌ها و گره‌های تصمیم‌گیری
+        const stories = {
+            forest: {
+                start: {
+                    title: "شروع ماجرا",
+                    text: "در یک روز آفتابی، یک پسر به نام آرین تصمیم گرفت تا به جنگل جادویی سفر کند. او با کوله‌پشتی پر از مواد غذایی و یک نقشه قدیمی به راه افتاد. وقتی وارد جنگل شد، با یک روباه قرمز رنگ مواجه شد که به او نزدیک شد و گفت: \"سلام آرین! من روباه جادویی هستم. اگر بخواهی گنج پنهان در این جنگل را پیدا کنی، باید چند چالش را پشت سر بگذاری.\"",
+                    image: "🌲",
+                    choices: [
+                        { text: "قبول کردن چالش و دنبال کردن روباه", next: "acceptChallenge" },
+                        { text: "رد کردن پیشنهاد و ادامه دادن مسیر", next: "rejectChallenge" }
+                    ]
+                },
+                acceptChallenge: {
+                    title: "پذیرش چالش",
+                    text: "آرین تصمیم گرفت چالش را بپذیرد. روباه او را به سمت یک درخت بزرگ برد که روی آن دو مسیر وجود داشت. روباه گفت: \"یکی از این مسیرها به گنج می‌رساند و دیگری به یک حفره عمیق. باید انتخاب کنی!\"",
+                    image: "🌳",
+                    choices: [
+                        { text: "رفتن از مسیر سمت چپ", next: "leftPath" },
+                        { text: "رفتن از مسیر سمت راست", next: "rightPath" }
+                    ]
+                },
+                rejectChallenge: {
+                    title: "رد چالش",
+                    text: "آرین تصمیم گرفت چالش را رد کند و مسیر خود را ادامه داد. بعد از مدتی به یک صخره بزرگ رسید که روی آن نوشته‌های قدیمی وجود داشت. یک صدای آرام از پشت صخره شنیده شد: \"اگر بخواهی راز پنهان را بدانی، باید معما را حل کنی.\"",
+                    image: "🪨",
+                    choices: [
+                        { text: "بازگشت به روباه و پذیرش چالش", next: "acceptChallenge" },
+                        { text: "سعی در حل معما", next: "solveRiddle" }
+                    ]
+                },
+                leftPath: {
+                    title: "مسیر سمت چپ",
+                    text: "آرین از مسیر سمت چپ رفت. بعد از مدتی به یک رودخانه رسید. روی پلی چوبی، یک پرندۀ بزرگ نشسته بود که گفت: \"برای عبور از پل، باید به سوال من پاسخ دهی. چه چیزی همیشه در حال رشد است اما هرگز بزرگ نمی‌شود؟\"",
+                    image: "🌉",
+                    choices: [
+                        { text: "پاسخ: \"درخت\"", next: "wrongAnswer" },
+                        { text: "پاسخ: \"دانش\"", next: "correctAnswer" }
+                    ]
+                },
+                rightPath: {
+                    title: "مسیر سمت راست",
+                    text: "آرین از مسیر سمت راست رفت. بعد از مدتی به یک غار تاریک رسید. صدایی از درون غار شنیده شد: \"اگر بخواهی گنج را پیدا کنی، باید ترس خود را کنار بگذاری و وارد شوی.\"",
+                    image: "🕳️",
+                    choices: [
+                        { text: "وارد شدن به غار", next: "enterCave" },
+                        { text: "بازگشت و امتحان مسیر دیگر", next: "leftPath" }
+                    ]
+                },
+                solveRiddle: {
+                    title: "حل معما",
+                    text: "آرین تصمیم گرفت معما را حل کند. نوشته‌های روی صخره می‌گفت: \"من چیزی هستم که همه از آن استفاده می‌کنند، اما هرگز نمی‌توان آن را دید. من چیستم؟\" آرین فکر کرد و پاسخ داد: \"هوش!\" ناگهان صخره به سمت کنار حرکت کرد و یک مسیر پنهان نشان داد.",
+                    image: "🧠",
+                    choices: [
+                        { text: "وارد شدن به مسیر پنهان", next: "hiddenPath" },
+                        { text: "صبر کردن و دیدن چه اتفاقی می‌افتد", next: "waitAndSee" }
+                    ]
+                },
+                wrongAnswer: {
+                    title: "پاسخ اشتباه",
+                    text: "آرین پاسخ اشتباه داد. پرنده گفت: \"پاسخ اشتباه است!\" و پل ناپدید شد. آرین افتاد به رودخانه و توسط جریان آب به بیرون از جنگل برده شد. داستان به پایان رسید!",
+                    image: "🌊",
+                    choices: [],
+                    ending: "bad"
+                },
+                correctAnswer: {
+                    title: "پاسخ صحیح",
+                    text: "آرین پاسخ صحیح داد: \"دانش!\" پرنده خوشحال شد و گفت: \"درست است!\" و پل محکم‌تر شد. آرین از پل عبور کرد و به یک محله جادویی رسید که در آنجا گنج پنهان وجود داشت. او گنج را پیدا کرد و به خانه بازگشت!",
+                    image: "🏆",
+                    choices: [],
+                    ending: "good"
+                },
+                enterCave: {
+                    title: "وارد شدن به غار",
+                    text: "آرین ترس خود را کنار گذاشت و وارد غار شد. درون غار تاریک بود اما ناگهان چراغ‌های جادویی روشن شدند. در انتهای غار، یک صندوق گنج پنهان دیده می‌شد. آرین به آن نزدیک شد و صندوق را باز کرد. درون آن نه گنج، بلکه یک نامه از روباه جادویی بود که می‌نوشت: \"شجاعت تو تو را به موفقیت رساند. تو واقعاً قهرمانی!\"",
+                    image: "🔦",
+                    choices: [],
+                    ending: "brave"
+                },
+                hiddenPath: {
+                    title: "مسیر پنهان",
+                    text: "آرین وارد مسیر پنهان شد. مسیر به سمت یک باغ جادویی پیچیده بود. در وسط باغ، یک درخت بزرگ با میوه‌های درخشان وجود داشت. یک صدای آشنا از پشت درخت شنیده شد: \"آرین! تو را دوست دارم! این میوه‌ها نماد دوستی و شجاعت توست.\" آرین یکی از میوه‌ها را برداشت و داستان با خوشبختی به پایان رسید.",
+                    image: "🌳",
+                    choices: [],
+                    ending: "happy"
+                },
+                waitAndSee: {
+                    title: "صبر و سکون",
+                    text: "آرین تصمیم گرفت صبر کند و ببیند چه اتفاقی می‌افتد. بعد از مدتی، روباه جادویی از پشت صخره ظاهر شد و گفت: \"تو شجاعی نشان دادی که بدون ترس صبر کنی. این همان چیزی است که من به دنبالش بودم.\" روباه یک نگین جادویی به آرین داد که او را به خانه بازگرداند.",
+                    image: "🦊",
+                    choices: [],
+                    ending: "wise"
+                }
+            },
+            ocean: {
+                start: {
+                    title: "شروع ماجرا",
+                    text: "سارا یک دختر ماجراجو بود که عاشق دریا بود. یک روز تصمیم گرفت تا با قایق کوچکش به سمت جزیره‌ای دوردست برود. وقتی به جزیره رسید، متوجه شد که این جزیره جادویی است و موجودات دریایی غریبه‌ای در آن زندگی می‌کنند. یک ماهی نقره‌ای به او نزدیک شد و گفت: \"سلام سارا! من نگهبان این جزیره هستم. اگر بخواهی گنج پنهان این جزیره را پیدا کنی، باید چند آزمون را پشت سر بگذاری.\"",
+                    image: "🐋",
+                    choices: [
+                        { text: "پذیرش آزمون‌ها", next: "acceptTest" },
+                        { text: "بازگشت به خانه", next: "goHome" }
+                    ]
+                },
+                acceptTest: {
+                    title: "پذیرش آزمون‌ها",
+                    text: "سارا تصمیم گرفت آزمون‌ها را بپذیرد. ماهی نقره‌ای او را به سمت یک غار زیر آب برد. در ورودی غار، دو مسیر وجود داشت. ماهی گفت: \"یکی از این مسیرها به گنج می‌رساند و دیگری به یک چاله عمیق. باید انتخاب کنی!\"",
+                    image: "🌊",
+                    choices: [
+                        { text: "رفتن از مسیر سمت چپ", next: "leftOceanPath" },
+                        { text: "رفتن از مسیر سمت راست", next: "rightOceanPath" }
+                    ]
+                },
+                goHome: {
+                    title: "بازگشت به خانه",
+                    text: "سارا تصمیم گرفت به خانه برگردد. وقتی داشت از جزیره دور می‌شد، صدایی از دریا شنید: \"سارا! اگر بخواهی راز این جزیره را بدانی، باید معما را حل کنی.\" سارا تردید کرد اما سپس تصمیم گرفت به جزیره برگردد.",
+                    image: "⛵",
+                    choices: [
+                        { text: "بازگشت به جزیره", next: "acceptTest" },
+                        { text: "ادامه دادن مسیر به خانه", next: "continueHome" }
+                    ]
+                },
+                leftOceanPath: {
+                    title: "مسیر سمت چپ",
+                    text: "سارا از مسیر سمت چپ رفت. بعد از مدتی به یک اتاق بزرگ رسید که در وسط آن یک صدف درخشان وجود داشت. صدایی از صدف شنیده شد: \"برای دریافت گنج، باید به سوال من پاسخ دهی. من چیستم که در همه جا هستم اما هیچ‌کس نمی‌تواند مرا بگیرد؟\"",
+                    image: "🐚",
+                    choices: [
+                        { text: "پاسخ: \"آب\"", next: "wrongOceanAnswer" },
+                        { text: "پاسخ: \"نفس\"", next: "correctOceanAnswer" }
+                    ]
+                },
+                rightOceanPath: {
+                    title: "مسیر سمت راست",
+                    text: "سارا از مسیر سمت راست رفت. بعد از مدتی به یک اتاق تاریک رسید. صدایی از تاریکی شنیده شد: \"اگر بخواهی گنج را پیدا کنی، باید ترس خود را کنار بگذاری و وارد شوی.\"",
+                    image: "🕳️",
+                    choices: [
+                        { text: "وارد شدن به اتاق تاریک", next: "enterDarkRoom" },
+                        { text: "بازگشت و امتحان مسیر دیگر", next: "leftOceanPath" }
+                    ]
+                },
+                continueHome: {
+                    title: "ادامه مسیر به خانه",
+                    text: "سارا تصمیم گرفت به خانه برود. وقتی به خانه رسید، متوجه شد که یک صدف جادویی در کوله‌پشتی‌اش گذاشته شده بود. وقتی صدف را باز کرد، یک نقشه گنج از درون آن بیرون آمد. سارا فهمید که ماجراجویی‌اش پایان نیافته است و فردا دوباره به سفر خواهد رفت.",
+                    image: "🐚",
+                    choices: [],
+                    ending: "return"
+                },
+                wrongOceanAnswer: {
+                    title: "پاسخ اشتباه",
+                    text: "سارا پاسخ اشتباه داد. صدف ناپدید شد و اتاق شروع به پر شدن از آب کرد. سارا با عجلت از غار خارج شد و به قایق‌اش رفت. داستان با یک احساس ناامیدی به پایان رسید!",
+                    image: "🌊",
+                    choices: [],
+                    ending: "bad"
+                },
+                correctOceanAnswer: {
+                    title: "پاسخ صحیح",
+                    text: "سارا پاسخ صحیح داد: \"نفس!\" صدف درخشان‌تر شد و یک صندوق گنج از زیر آن بیرون آمد. داخل صندوق، گنج‌های دریایی و یک نامه از نگهبان جزیره بود که می‌نوشت: \"تو واقعاً شایسته این گنج هستی!\" سارا گنج را برداشت و با خوشحالی به خانه بازگشت.",
+                    image: "🏆",
+                    choices: [],
+                    ending: "good"
+                },
+                enterDarkRoom: {
+                    title: "وارد شدن به اتاق تاریک",
+                    text: "سارا ترس خود را کنار گذاشت و وارد اتاق تاریک شد. ناگهان چراغ‌های جادویی روشن شدند و اتاق پر از ماهی‌های رنگارنگ شد. در وسط اتاق، یک صندوق گنج وجود داشت. وقتی سارا صندوق را باز کرد، متوجه شد که داخل آن نه گنج، بلکه یک نامه از نگهبان جزیره بود که می‌نوشت: \"شجاعت تو تو را به موفقیت رساند. تو واقعاً قهرمانی!\"",
+                    image: "🔦",
+                    choices: [],
+                    ending: "brave"
+                }
+            },
+            castle: {
+                start: {
+                    title: "شروع ماجرا",
+                    text: "علی یک پسر کنجکاو بود که در جنگل‌های دوردست زندگی می‌کرد. یک روز وقتی در حال جمع‌آوری چوب بود، یک قلعه قدیمی را در دوردست‌ها دید. او تصمیم گرفت به سمت قلعه برود. وقتی به قلعه رسید، متوجه شد که قفل درها جادویی است. یک صدای آرام از درون قلعه شنیده شد: \"سلام علی! من روح نگهبان این قلعه هستم. اگر بخواهی رازهای این قلعه را کشف کنی، باید چند معما را حل کنی.\"",
+                    image: "🏰",
+                    choices: [
+                        { text: "پذیرش چالش معماها", next: "acceptRiddles" },
+                        { text: "بازگشت به خانه", next: "leaveCastle" }
+                    ]
+                },
+                acceptRiddles: {
+                    title: "پذیرش چالش معماها",
+                    text: "علی تصمیم گرفت معماها را حل کند. صدای روح گفت: \"خوب، اولین معما این است: من چیزی هستم که همه از آن استفاده می‌کنند، اما هرگز نمی‌توان آن را دید. من چیستم؟\"",
+                    image: "🧠",
+                    choices: [
+                        { text: "پاسخ: \"هوش\"", next: "firstRiddleCorrect" },
+                        { text: "پاسخ: \"آب\"", next: "firstRiddleWrong" }
+                    ]
+                },
+                leaveCastle: {
+                    title: "ترک قلعه",
+                    text: "علی تصمیم گرفت قلعه را ترک کند. وقتی داشت دور می‌شد، صدایی از پشت سرش شنید: \"علی! اگر بخواهی راز این قلعه را بدانی، باید معماها را حل کنی.\" علی تردید کرد اما سپس تصمیم گرفت به قلعه برگردد.",
+                    image: "🚪",
+                    choices: [
+                        { text: "بازگشت به قلعه", next: "acceptRiddles" },
+                        { text: "ادامه دادن مسیر به خانه", next: "continueHomeCastle" }
+                    ]
+                },
+                firstRiddleCorrect: {
+                    title: "پاسخ صحیح",
+                    text: "علی پاسخ صحیح داد: \"هوش!\" درها با صدایی کلنجار کشیدند و باز شدند. علی وارد قلعه شد و به یک اتاق بزرگ رسید. در وسط اتاق، دو در وجود داشت. روی هر در یک نشانه بود. روح گفت: \"یکی از این درها به گنج می‌رساند و دیگری به یک اتاق خالی. باید انتخاب کنی!\"",
+                    image: "🚪",
+                    choices: [
+                        { text: "رفتن از در سمت چپ", next: "leftCastleDoor" },
+                        { text: "رفتن از در سمت راست", next: "rightCastleDoor" }
+                    ]
+                },
+                firstRiddleWrong: {
+                    title: "پاسخ اشتباه",
+                    text: "علی پاسخ اشتباه داد. درها بسته‌تر شدند و قلعه شروع به تاریک شدن کرد. علی با عجلت از قلعه فرار کرد. داستان با یک احساس ناامیدی به پایان رسید!",
+                    image: "🔒",
+                    choices: [],
+                    ending: "bad"
+                },
+                continueHomeCastle: {
+                    title: "ادامه مسیر به خانه",
+                    text: "علی تصمیم گرفت به خانه برود. وقتی به خانه رسید، متوجه شد که یک کلید جادویی در جیب جلیقه‌اش گذاشته شده بود. وقتی کلید را نگاه کرد، یک نقشه از قلعه روی آن ظاهر شد. علی فهمید که ماجراجویی‌اش پایان نیافته است و فردا دوباره به سفر خواهد رفت.",
+                    image: "🗝️",
+                    choices: [],
+                    ending: "return"
+                },
+                leftCastleDoor: {
+                    title: "در سمت چپ",
+                    text: "علی از در سمت چپ رفت. به یک اتاق بزرگ رسید که در وسط آن یک صندوق گنج وجود داشت. وقتی صندوق را باز کرد، متوجه شد که داخل آن نه گنج، بلکه یک نامه از روح نگهبان بود که می‌نوشت: \"تو واقعاً شایسته این رازها هستی!\" علی نامه را برداشت و با خوشحالی به خانه بازگشت.",
+                    image: "📦",
+                    choices: [],
+                    ending: "good"
+                },
+                rightCastleDoor: {
+                    title: "در سمت راست",
+                    text: "علی از در سمت راست رفت. به یک اتاق تاریک رسید. ناگهان چراغ‌های جادویی روشن شدند و اتاق پر از موجودات فانتزی شد. در وسط اتاق، یک تاج درخشان وجود داشت. وقتی علی تاج را برداشت، صدای روح گفت: \"تو واقعاً شجاعی! این تاج نماد شجاعت توست.\" علی تاج را گرفت و با غرور به خانه بازگشت.",
+                    image: "👑",
+                    choices: [],
+                    ending: "brave"
+                }
+            }
+        };
+
+        // متغیرهای برنامه
+        let currentStory = 'forest';
+        let currentStoryNode = 'start';
+        let progress = 0;
+
+        // DOM Elements
+        const storySelector = document.getElementById('storySelector');
+        const storyTitle = document.getElementById('storyTitle');
+        const storyText = document.getElementById('storyText');
+        const storyImage = document.getElementById('storyImage');
+        const choicesContainer = document.getElementById('choicesContainer');
+        const restartBtn = document.getElementById('restartBtn');
+        const progressBar = document.getElementById('progressBar');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Initialize the app
+        function initApp() {
+            // Add event listeners to story buttons
+            document.querySelectorAll('.story-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.story-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update current story
+                    currentStory = button.dataset.story;
+                    
+                    // Reset to start node
+                    currentStoryNode = 'start';
+                    
+                    // Update story content
+                    updateStoryContent();
+                });
+            });
+            
+            // Update story content
+            updateStoryContent();
+            
+            // Add event listener to restart button
+            restartBtn.addEventListener('click', restartStory);
+            
+            // Theme toggle functionality
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                
+                if (document.body.classList.contains('dark-theme')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+        }
+
+        // Update story content based on current node
+        function updateStoryContent() {
+            const story = stories[currentStory];
+            const node = story[currentStoryNode];
+            
+            // Update title
+            storyTitle.textContent = node.title;
+            
+            // Update text
+            storyText.textContent = node.text;
+            
+            // Update image
+            storyImage.textContent = node.image;
+            
+            // Update choices
+            choicesContainer.innerHTML = '';
+            
+            if (node.choices.length > 0) {
+                node.choices.forEach((choice, index) => {
+                    const choiceBtn = document.createElement('button');
+                    choiceBtn.className = 'choice-btn';
+                    choiceBtn.textContent = choice.text;
+                    choiceBtn.dataset.choice = index;
+                    choiceBtn.addEventListener('click', () => {
+                        makeChoice(choice.next);
+                    });
+                    choicesContainer.appendChild(choiceBtn);
+                });
+            } else {
+                // Show restart button for endings
+                restartBtn.style.display = 'block';
+                
+                // Update progress bar for endings
+                if (node.ending) {
+                    progress = 100;
+                    progressBar.style.width = '100%';
+                }
+            }
+            
+            // Update progress
+            updateProgress();
+        }
+
+        // Make a choice and move to next node
+        function makeChoice(nextNode) {
+            currentStoryNode = nextNode;
+            updateStoryContent();
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            // Simple progress calculation based on story nodes
+            const progressMap = {
+                'start': 0,
+                'acceptChallenge': 20,
+                'rejectChallenge': 20,
+                'leftPath': 40,
+                'rightPath': 40,
+                'solveRiddle': 40,
+                'wrongAnswer': 60,
+                'correctAnswer': 100,
+                'enterCave': 100,
+                'hiddenPath': 100,
+                'waitAndSee': 100,
+                'acceptTest': 20,
+                'goHome': 20,
+                'leftOceanPath': 40,
+                'rightOceanPath': 40,
+                'continueHome': 100,
+                'wrongOceanAnswer': 60,
+                'correctOceanAnswer': 100,
+                'enterDarkRoom': 100,
+                'acceptRiddles': 20,
+                'leaveCastle': 20,
+                'firstRiddleCorrect': 40,
+                'firstRiddleWrong': 60,
+                'continueHomeCastle': 100,
+                'leftCastleDoor': 100,
+                'rightCastleDoor': 100
+            };
+            
+            progress = progressMap[currentStoryNode] || 0;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Restart the story
+        function restartStory() {
+            currentStoryNode = 'start';
+            progress = 0;
+            restartBtn.style.display = 'none';
+            updateStoryContent();
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
