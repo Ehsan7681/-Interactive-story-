@@ -1,7 +1,7 @@
 {
   "name": "مجموعه داستان‌های تعاملی بچگانه",
   "short_name": "داستان‌های تعاملی",
-  "description": "مجموعه سه داستان تعاملی بچگانه با پایان‌های متفاوت",
+  "description": "مجموعه شش داستان تعاملی بچگانه با پایان‌های متفاوت",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f0f0f0",
