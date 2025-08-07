@@ -384,6 +384,20 @@
             color: #fff;
         }
 
+        .creator-info {
+            text-align: center;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 10px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme .creator-info {
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         /* Responsive design */
         @media (max-width: 600px) {
             .story-app {
@@ -514,6 +528,10 @@
                 <button class="restart-btn" id="restartBtn">
                     <i class="fas fa-redo"></i> شروع دوباره داستان
                 </button>
+            </div>
+            
+            <div class="creator-info">
+                ایده و تولید توسط احسان شمسی
             </div>
         </div>
     </div>
